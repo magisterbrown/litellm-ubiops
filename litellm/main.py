@@ -7,6 +7,35 @@
 #
 #  Thank you ! We ❤️ you! - Krrish & Ishaan
 
+from litellm.utils import StreamingChoices
+class ModelResponseListIterator:
+    def __init__(self, model_responses):
+        self.model_responses = model_responses
+        self.index = 0
+
+    # Sync iterator
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.index >= len(self.model_responses):
+            raise StopIteration
+        model_response = self.model_responses[self.index]
+        self.index += 1
+        return model_response
+
+    # Async iterator
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        if self.index >= len(self.model_responses):
+            raise StopAsyncIteration
+        model_response = self.model_responses[self.index]
+        self.index += 1
+        return model_response
+
+
 import os, openai, sys, json, inspect, uuid, datetime, threading
 from typing import Any, Literal, Union, BinaryIO
 from typing_extensions import overload
@@ -1567,6 +1596,23 @@ def completion(
                 )
                 return response
             response = model_response
+        elif custom_llm_provider == "huggingface":
+            ch = {
+                        "delta": {"content": "Hyekwe", "role": "assistant"},
+                        "finish_reason": "stop",
+                        "index": 0,
+                    }
+
+            new_chunk = litellm.ModelResponse(stream=True, id="123", choices=[StreamingChoices(**ch)])
+            completion_stream = ModelResponseListIterator(model_responses=[new_chunk])
+            response = litellm.CustomStreamWrapper(
+                completion_stream=completion_stream,
+                model="gpt-4-0613",
+                custom_llm_provider="cached_response",
+                logging_obj=logging,
+            )
+
+            return response
         elif custom_llm_provider == "huggingface":
             custom_llm_provider = "huggingface"
             huggingface_key = (
