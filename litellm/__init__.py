@@ -629,6 +629,7 @@ provider_list: List = [
     "triton",
     "predibase",
     "databricks",
+    "ubiops",
     "custom",  # custom apis
 ]
 
