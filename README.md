@@ -44,6 +44,19 @@ LiteLLM manages:
 
 Support for more providers. Missing a provider or LLM Platform, raise a [feature request](https://github.com/BerriAI/litellm/issues/new?assignees=&labels=enhancement&projects=&template=feature_request.yml&title=%5BFeature%5D%3A+).
 
+# Ubiops
+These repos is an LiteLLM fork that adds Ubiops as a provider. See [docs](https://ubiops.com/docs/) to deploy LLm on Ubiops. LiteLLM confing should have following style to establish a connection:
+```yaml
+model_list:
+  - model_name: model-on-ubiops# model alias
+    litellm_params:
+      model: "ubiops/<project-name>/<deployment-name>/<deployment-version>"
+      req_field: "<input-variable-name>"
+      resp_field: "<output-variable-name>"
+      api_key: "<ubiops-token>"
+```
+
+
 # Usage ([**Docs**](https://docs.litellm.ai/docs/))
 
 > [!IMPORTANT]
