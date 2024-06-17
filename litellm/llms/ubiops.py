@@ -1,4 +1,5 @@
 from typing import Optional
+import json
 
 from litellm.utils import ModelResponse, StreamingChoices
 import httpx
@@ -14,7 +15,7 @@ class UbiOps(BaseLLM):
         super().__init__()
         self.idx = 0
 
-    def completion(self, msg: str, endpoint: str, req_field: str, resp_field: str, api_key: str):
+    def completion(self, msg: dict, endpoint: str, req_field: str, resp_field: str, api_key: str):
         super().completion()
         project, deployment, version = endpoint.split('/')
 
@@ -25,7 +26,7 @@ class UbiOps(BaseLLM):
             project_name=project,
             deployment_name=deployment,
             version=version,
-            data={req_field: msg}
+            data={req_field: json.dumps(msg)}
         )
 
         self.idx+=1
